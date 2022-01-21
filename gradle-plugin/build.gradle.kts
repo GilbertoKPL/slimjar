@@ -6,9 +6,9 @@ plugins {
     `java-gradle-plugin`
     `kotlin-dsl`
     groovy
-    kotlin("jvm") version "1.4.20"
+    kotlin("jvm") version "1.5.31"
     id("com.gradle.plugin-publish") version "0.12.0"
-    id("com.github.johnrengelman.shadow") version "7.0.0"
+    id("com.github.johnrengelman.shadow") version "7.1.0"
     `maven-publish`
 }
 
@@ -24,17 +24,17 @@ configurations["compileOnly"].extendsFrom(shadowImplementation)
 configurations["testImplementation"].extendsFrom(shadowImplementation)
 
 dependencies {
-    shadowImplementation(kotlin("stdlib", "1.4.20"))
+    shadowImplementation(kotlin("stdlib", "1.5.31"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
     shadowImplementation(project(":slimjar"))
-    shadowImplementation("com.google.code.gson:gson:2.8.6")
+    shadowImplementation("com.google.code.gson:gson:2.8.9")
 
     compileOnly("com.github.jengelman.gradle.plugins:shadow:6.1.0")
 
     testImplementation("com.github.jengelman.gradle.plugins:shadow:6.1.0")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0")
-    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.7.0")
-    testImplementation("org.assertj:assertj-core:3.19.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.8.2")
+    testImplementation("org.assertj:assertj-core:3.22.0")
 }
 
 val shadowJarTask = tasks.named("shadowJar", ShadowJar::class.java)
@@ -69,6 +69,10 @@ tasks.withType<GenerateModuleMetadata> {
 }
 
 tasks {
+    withType<JavaCompile> {
+        sourceCompatibility = "1.8"
+        targetCompatibility = "1.8"
+    }
     withType<KotlinCompile> {
         kotlinOptions {
             jvmTarget = "1.8"
@@ -122,5 +126,5 @@ pluginBundle {
 }
 val compileKotlin: KotlinCompile by tasks
 compileKotlin.kotlinOptions {
-    languageVersion = "1.4"
+    languageVersion = "1.5"
 }
