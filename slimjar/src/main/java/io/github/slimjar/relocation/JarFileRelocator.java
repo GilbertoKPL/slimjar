@@ -45,7 +45,7 @@ public final class JarFileRelocator implements Relocator {
     public void relocate(File input, File output) throws IOException, ReflectiveOperationException {
         output.getParentFile().mkdirs();
         output.createNewFile();
-        final JarRelocatorFacade jarRelocator = relocatorFacadeFactory.createFacade(input,output, relocations);
+        final JarRelocatorFacade jarRelocator = relocatorFacadeFactory.createFacade(input, output, relocations);
         jarRelocator.run();
     }
 }

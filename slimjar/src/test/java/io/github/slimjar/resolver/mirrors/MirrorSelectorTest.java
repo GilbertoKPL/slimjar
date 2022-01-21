@@ -30,7 +30,6 @@ import junit.framework.TestCase;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 

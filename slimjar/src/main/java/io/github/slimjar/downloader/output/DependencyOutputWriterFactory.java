@@ -24,8 +24,9 @@
 
 package io.github.slimjar.downloader.output;
 
-import io.github.slimjar.resolver.data.Dependency;
 import io.github.slimjar.downloader.strategy.FilePathStrategy;
+import io.github.slimjar.resolver.data.Dependency;
+
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;

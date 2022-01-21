@@ -26,7 +26,7 @@ package io.github.slimjar.resolver.reader.provider;
 
 import io.github.slimjar.resolver.data.Repository;
 import io.github.slimjar.resolver.mirrors.SimpleMirrorSelector;
-import io.github.slimjar.resolver.reader.*;
+import io.github.slimjar.resolver.reader.MockDependencyData;
 import io.github.slimjar.resolver.reader.dependency.DependencyDataProvider;
 import io.github.slimjar.resolver.reader.dependency.DependencyReader;
 import io.github.slimjar.resolver.reader.dependency.GsonDependencyReader;
@@ -71,7 +71,7 @@ public class URLDependencyDataProviderTest extends TestCase {
         PowerMockito.whenNew(URL.class).withParameterTypes(String.class).withArguments("MyURLString").thenReturn(mockUrl);
         PowerMockito.when(mockUrl.openStream()).thenReturn(mockDependencyData.getDependencyDataInputStream());
         final DependencyDataProvider dependencyDataProvider = new URLDependencyDataProvider(new GsonDependencyReader(ReflectiveGsonFacadeFactory.create(DEFAULT_DOWNLOAD_DIRECTORY, CENTRAL_MIRRORS).createFacade()), mockUrl);
-        assertEquals("Read and provide proper dependencies",mockDependencyData.getExpectedSample(), dependencyDataProvider.get());
+        assertEquals("Read and provide proper dependencies", mockDependencyData.getExpectedSample(), dependencyDataProvider.get());
     }
 
     public void testFileDependencyDataProviderReturnReader() throws Exception {

@@ -46,7 +46,7 @@ public final class ModuleDependencyDataProvider implements DependencyDataProvide
 
     @Override
     public DependencyData get() throws IOException, ReflectiveOperationException {
-        final URL depFileURL = new URL("jar:file:" +moduleUrl.getFile() +"!/slimjar.json");
+        final URL depFileURL = new URL("jar:file:" + moduleUrl.getFile() + "!/slimjar.json");
 
         final URLConnection connection = depFileURL.openConnection();
         if (!(connection instanceof JarURLConnection)) {
@@ -64,7 +64,7 @@ public final class ModuleDependencyDataProvider implements DependencyDataProvide
             );
         }
 
-        try (InputStream inputStream = jarFile.getInputStream(dependencyFileEntry)){
+        try (InputStream inputStream = jarFile.getInputStream(dependencyFileEntry)) {
             return dependencyReader.read(inputStream);
         }
     }

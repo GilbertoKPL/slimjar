@@ -35,6 +35,7 @@ public final class PassthroughDependencyVerifierFactory implements DependencyVer
     public DependencyVerifier create(DependencyResolver resolver) {
         return new PassthroughVerifier();
     }
+
     private static final class PassthroughVerifier implements DependencyVerifier {
         @Override
         public boolean verify(final File file, final Dependency dependency) throws IOException {

@@ -59,6 +59,7 @@ public class DependencyReaderTest extends TestCase {
         final String defaultPath = String.format("%s/.slimjar", userHome);
         DEFAULT_DOWNLOAD_DIRECTORY = new File(defaultPath).toPath();
     }
+
     public void testDependencyReaderParse() throws IOException, NoSuchAlgorithmException, ReflectiveOperationException, URISyntaxException {
         final MockDependencyData mockDependencyData = new MockDependencyData();
         final DependencyReader dependencyReader = new GsonDependencyReader(ReflectiveGsonFacadeFactory.create(DEFAULT_DOWNLOAD_DIRECTORY, CENTRAL_MIRRORS).createFacade());

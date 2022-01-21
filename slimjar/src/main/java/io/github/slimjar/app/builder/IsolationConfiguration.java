@@ -47,6 +47,10 @@ public final class IsolationConfiguration {
         this.moduleExtractor = moduleExtractor;
     }
 
+    public static Builder builder(final String applicationClass) {
+        return new Builder().applicationClass(applicationClass);
+    }
+
     public String getApplicationClass() {
         return applicationClass;
     }
@@ -61,10 +65,6 @@ public final class IsolationConfiguration {
 
     public ModuleExtractor getModuleExtractor() {
         return moduleExtractor;
-    }
-
-    public static Builder builder(final String applicationClass) {
-        return new Builder().applicationClass(applicationClass);
     }
 
     public static final class Builder {

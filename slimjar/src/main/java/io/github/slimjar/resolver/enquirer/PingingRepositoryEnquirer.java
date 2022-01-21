@@ -29,8 +29,8 @@ import io.github.slimjar.logging.ProcessLogger;
 import io.github.slimjar.resolver.ResolutionResult;
 import io.github.slimjar.resolver.data.Dependency;
 import io.github.slimjar.resolver.data.Repository;
-import io.github.slimjar.resolver.strategy.PathResolutionStrategy;
 import io.github.slimjar.resolver.pinger.URLPinger;
+import io.github.slimjar.resolver.strategy.PathResolutionStrategy;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -66,12 +66,12 @@ public final class PingingRepositoryEnquirer implements RepositoryEnquirer {
                 .findFirst();
         if (!resolvedDependency.isPresent()) {
             return pomURLCreationStrategy.pathTo(repository, dependency).stream().map((path) -> {
-                try {
-                    return new URL(path);
-                } catch (MalformedURLException e) {
-                    return null;
-                }
-            }).filter(urlPinger::ping)
+                        try {
+                            return new URL(path);
+                        } catch (MalformedURLException e) {
+                            return null;
+                        }
+                    }).filter(urlPinger::ping)
                     .findFirst()
                     .map(url -> new ResolutionResult(repository, null, null, true))
                     .orElse(null);

@@ -24,7 +24,6 @@
 
 package io.github.slimjar.relocation.meta;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;

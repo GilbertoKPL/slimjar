@@ -30,7 +30,6 @@ import io.github.slimjar.util.Repositories;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 
 public final class MavenSnapshotPathResolutionStrategy implements PathResolutionStrategy {
     private static final String PATH_FORMAT_ALT = "%s%s/%s/%s-SNAPSHOT/%4$s-%s/%3$s-%4$s-%5$s.jar";

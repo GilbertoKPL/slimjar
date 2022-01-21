@@ -44,6 +44,7 @@ import java.nio.file.Path;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 
 public final class ReflectiveGsonFacadeFactory implements GsonFacadeFactory {
     private static final String GSON_PACKAGE = "com#google#gson#Gson";
@@ -61,12 +62,6 @@ public final class ReflectiveGsonFacadeFactory implements GsonFacadeFactory {
         this.canonicalizeMethod = canonicalizeMethod;
     }
 
-    @Override
-    public GsonFacade createFacade() throws ReflectiveOperationException {
-        final Object gson = gsonConstructor.newInstance();
-        return new ReflectiveGsonFacade(gson, gsonFromJsonMethod, gsonFromJsonTypeMethod, canonicalizeMethod);
-    }
-
     public static GsonFacadeFactory create(final Path downloadPath, final Collection<Repository> repositories) throws ReflectiveOperationException, NoSuchAlgorithmException, IOException, URISyntaxException {
         final InjectableClassLoader classLoader = new IsolatedInjectableClassLoader();
         return create(downloadPath, repositories, classLoader);
@@ -78,7 +73,7 @@ public final class ReflectiveGsonFacadeFactory implements GsonFacadeFactory {
                 .dataProviderFactory((url) -> () -> ReflectiveGsonFacadeFactory.getGsonDependency(repositories))
                 .relocatorFactory((rules) -> new PassthroughRelocator())
                 .preResolutionDataProviderFactory(a -> Collections::emptyMap)
-                .relocationHelperFactory((relocator) -> (dependency,file) -> file)
+                .relocationHelperFactory((relocator) -> (dependency, file) -> file)
                 .build();
         final Class<?> gsonClass = Class.forName(Packages.fix(GSON_PACKAGE), true, classLoader);
         final Constructor<?> gsonConstructor = gsonClass.getConstructor();
@@ -95,9 +90,9 @@ public final class ReflectiveGsonFacadeFactory implements GsonFacadeFactory {
         final Dependency gson = new Dependency(
                 Packages.fix("com#google#code#gson"),
                 "gson",
-                "2.8.6",
+                "2.8.9",
                 null,
-                Collections.emptyList()
+                new HashSet<>()
         );
         return new DependencyData(
                 Collections.emptySet(),
@@ -105,5 +100,11 @@ public final class ReflectiveGsonFacadeFactory implements GsonFacadeFactory {
                 Collections.singleton(gson),
                 Collections.emptyList()
         );
+    }
+
+    @Override
+    public GsonFacade createFacade() throws ReflectiveOperationException {
+        final Object gson = gsonConstructor.newInstance();
+        return new ReflectiveGsonFacade(gson, gsonFromJsonMethod, gsonFromJsonTypeMethod, canonicalizeMethod);
     }
 }

@@ -26,7 +26,7 @@ package io.github.slimjar.injector.loader.manifest;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.net.*;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.HashMap;
@@ -38,6 +38,10 @@ public final class JarManifestGenerator implements ManifestGenerator {
 
     public JarManifestGenerator(final URI jarURI) {
         this.jarURI = jarURI;
+    }
+
+    public static ManifestGenerator with(final URI uri) {
+        return new JarManifestGenerator(uri);
     }
 
     @Override
@@ -55,14 +59,10 @@ public final class JarManifestGenerator implements ManifestGenerator {
             final Path nf = fs.getPath("META-INF/MANIFEST.MF");
             Files.createDirectories(nf.getParent());
             try (final Writer writer = Files.newBufferedWriter(nf, StandardCharsets.UTF_8, StandardOpenOption.CREATE)) {
-               for (Map.Entry<String, String> entry : attributes.entrySet()) {
-                   writer.write(String.format("%s: %s%n", entry.getKey(), entry.getValue()));
-               }
+                for (Map.Entry<String, String> entry : attributes.entrySet()) {
+                    writer.write(String.format("%s: %s%n", entry.getKey(), entry.getValue()));
+                }
             }
         }
-    }
-
-    public static ManifestGenerator with(final URI uri) {
-        return new JarManifestGenerator(uri);
     }
 }

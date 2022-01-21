@@ -31,9 +31,9 @@ import java.net.URL;
 import java.net.URLClassLoader;
 
 public interface Injectable {
-    void inject(final URL url) throws IOException, InvocationTargetException, IllegalAccessException, URISyntaxException;
-    
     static WrappedInjectableClassLoader wrap(final URLClassLoader classLoader) {
         return new WrappedInjectableClassLoader(classLoader);
     }
+
+    void inject(final URL url) throws IOException, InvocationTargetException, IllegalAccessException, URISyntaxException;
 }

@@ -25,7 +25,6 @@
 package io.github.slimjar.downloader.verify;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public interface ChecksumCalculator {

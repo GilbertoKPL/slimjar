@@ -25,7 +25,8 @@
 package io.github.slimjar.util;
 
 public final class Parameters {
-    private Parameters() { }
+    private Parameters() {
+    }
 
     public static Class<?>[] typesFrom(final Object... args) {
         Class<?>[] result = new Class[args.length];

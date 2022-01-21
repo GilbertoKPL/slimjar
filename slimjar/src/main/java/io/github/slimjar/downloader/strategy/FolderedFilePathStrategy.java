@@ -25,7 +25,6 @@
 package io.github.slimjar.downloader.strategy;
 
 
-import io.github.slimjar.downloader.output.DependencyOutputWriterFactory;
 import io.github.slimjar.resolver.data.Dependency;
 
 import java.io.File;
@@ -43,20 +42,6 @@ public final class FolderedFilePathStrategy implements FilePathStrategy {
         this.rootDirectory = rootDirectory;
     }
 
-    @Override
-    public File selectFileFor(Dependency dependency) {
-        final String extendedVersion = Optional.ofNullable(dependency.getSnapshotId()).map(s -> "-" + s).orElse("");
-        final String path = String.format(
-                DEPENDENCY_FILE_FORMAT,
-                rootDirectory.getPath(),
-                dependency.getGroupId().replace('.','/'),
-                dependency.getArtifactId(),
-                dependency.getVersion() + extendedVersion
-        );
-        LOGGER.log(Level.FINEST, "Selected jar file for " + dependency.getArtifactId() + " at " + path);
-        return new File(path);
-    }
-
     public static FilePathStrategy createStrategy(final File rootDirectory) throws IllegalArgumentException {
         if (!rootDirectory.exists()) {
             boolean created = rootDirectory.mkdirs();
@@ -68,5 +53,19 @@ public final class FolderedFilePathStrategy implements FilePathStrategy {
             throw new IllegalArgumentException("Expecting a directory for download root! " + rootDirectory);
         }
         return new FolderedFilePathStrategy(rootDirectory);
+    }
+
+    @Override
+    public File selectFileFor(Dependency dependency) {
+        final String extendedVersion = Optional.ofNullable(dependency.getSnapshotId()).map(s -> "-" + s).orElse("");
+        final String path = String.format(
+                DEPENDENCY_FILE_FORMAT,
+                rootDirectory.getPath(),
+                dependency.getGroupId().replace('.', '/'),
+                dependency.getArtifactId(),
+                dependency.getVersion() + extendedVersion
+        );
+        LOGGER.log(Level.FINEST, "Selected jar file for " + dependency.getArtifactId() + " at " + path);
+        return new File(path);
     }
 }

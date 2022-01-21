@@ -41,8 +41,6 @@ import java.net.URLConnection;
 import java.nio.file.Files;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public final class ChecksumDependencyVerifier implements DependencyVerifier {
     private static final ProcessLogger LOGGER = LogDispatcher.getMediatingLogger();
@@ -63,7 +61,7 @@ public final class ChecksumDependencyVerifier implements DependencyVerifier {
     @Override
     public boolean verify(final File file, final Dependency dependency) throws IOException {
         if (!file.exists()) return false;
-        LOGGER.log("Verifying checksum for {0}", dependency.getArtifactId());
+        LOGGER.debug("Verifying checksum for {0}", dependency.getArtifactId());
         final File checksumFile = outputWriterFactory.getStrategy().selectFileFor(dependency);
         checksumFile.getParentFile().mkdirs();
         if (!checksumFile.exists() && !prepareChecksumFile(checksumFile, dependency)) {
@@ -79,7 +77,7 @@ public final class ChecksumDependencyVerifier implements DependencyVerifier {
         LOGGER.debug("{0} -> Actual checksum: {1};", dependency.getArtifactId(), actualChecksum);
         LOGGER.debug("{0} -> Expected checksum: {1};", dependency.getArtifactId(), expectedChecksum);
         final boolean match = Objects.equals(actualChecksum, expectedChecksum);
-        LOGGER.log("Checksum {0} for {1}", match ? "matched" : "match failed", dependency.getArtifactId());
+        LOGGER.debug("Checksum {0} for {1}", match ? "matched" : "match failed", dependency.getArtifactId());
         return Objects.equals(actualChecksum, expectedChecksum);
     }
 
@@ -97,7 +95,7 @@ public final class ChecksumDependencyVerifier implements DependencyVerifier {
             return false;
         } else {
             final URL checkSumUrl = result.get().getChecksumURL();
-            LOGGER.log("Resolved checksum URL for {0} as {1}", dependency.getArtifactId(), checkSumUrl);
+            LOGGER.debug("Resolved checksum URL for {0} as {1}", dependency.getArtifactId(), checkSumUrl);
             if (checkSumUrl == null) {
                 checksumFile.createNewFile();
                 return true;
@@ -107,7 +105,7 @@ public final class ChecksumDependencyVerifier implements DependencyVerifier {
             final OutputWriter outputWriter = outputWriterFactory.create(dependency);
             outputWriter.writeFrom(inputStream, connection.getContentLength());
             Connections.tryDisconnect(connection);
-            LOGGER.log("Downloaded checksum for {0}", dependency.getArtifactId());
+            LOGGER.debug("Downloaded checksum for {0}", dependency.getArtifactId());
         }
         return true;
     }

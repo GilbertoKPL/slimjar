@@ -33,7 +33,6 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
-import java.util.Objects;
 
 public final class HttpURLPinger implements URLPinger {
     private static final ProcessLogger LOGGER = LogDispatcher.getMediatingLogger();
@@ -51,6 +50,7 @@ public final class HttpURLPinger implements URLPinger {
         HttpURLConnection connection = null;
         try {
             connection = (HttpURLConnection) url.openConnection();
+            connection.setConnectTimeout(1000 * 5);
             connection.addRequestProperty("User-Agent", SLIMJAR_USER_AGENT);
             connection.connect();
             final boolean result = connection.getResponseCode() == HttpURLConnection.HTTP_OK;

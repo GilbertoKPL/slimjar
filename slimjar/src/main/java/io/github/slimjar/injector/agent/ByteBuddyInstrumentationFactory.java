@@ -51,6 +51,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.UUID;
 
 public final class ByteBuddyInstrumentationFactory implements InstrumentationFactory {
@@ -74,6 +75,27 @@ public final class ByteBuddyInstrumentationFactory implements InstrumentationFac
         this.agentJarUrl = agentJarUrl;
         this.extractor = extractor;
         this.relocatorFacadeFactory = relocatorFacadeFactory;
+    }
+
+    private static DependencyData getDependency() throws MalformedURLException {
+        final Dependency byteBuddy = new Dependency(
+                "net.bytebuddy",
+                "byte-buddy-agent",
+                "1.11.0",
+                null,
+                new HashSet<>()
+        );
+        final Repository centralRepository = new Repository(new URL(SimpleMirrorSelector.CENTRAL_URL));
+        return new DependencyData(
+                Collections.emptySet(),
+                Collections.singleton(centralRepository),
+                Collections.singleton(byteBuddy),
+                Collections.emptyList()
+        );
+    }
+
+    private static String generatePattern() {
+        return String.format("slimjar.%s", UUID.randomUUID().toString());
     }
 
     @Override
@@ -116,27 +138,5 @@ public final class ByteBuddyInstrumentationFactory implements InstrumentationFac
         final Class<?> agentClass = Class.forName(relocatedAgentClass, true, ClassLoader.getSystemClassLoader());
         final Method instrMethod = agentClass.getMethod("getInstrumentation");
         return (Instrumentation) instrMethod.invoke(null);
-    }
-
-
-    private static DependencyData getDependency() throws MalformedURLException {
-        final Dependency byteBuddy = new Dependency(
-                "net.bytebuddy",
-                "byte-buddy-agent",
-                "1.11.0",
-                null,
-                Collections.emptyList()
-        );
-        final Repository centralRepository = new Repository(new URL(SimpleMirrorSelector.CENTRAL_URL));
-        return new DependencyData(
-                Collections.emptySet(),
-                Collections.singleton(centralRepository),
-                Collections.singleton(byteBuddy),
-                Collections.emptyList()
-        );
-    }
-
-    private static String generatePattern() {
-        return String.format("slimjar.%s", UUID.randomUUID().toString());
     }
 }

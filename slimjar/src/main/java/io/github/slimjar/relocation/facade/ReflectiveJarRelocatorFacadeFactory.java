@@ -32,7 +32,6 @@ import io.github.slimjar.relocation.RelocationRule;
 import io.github.slimjar.resolver.data.Dependency;
 import io.github.slimjar.resolver.data.DependencyData;
 import io.github.slimjar.resolver.data.Repository;
-import io.github.slimjar.resolver.mirrors.SimpleMirrorSelector;
 import io.github.slimjar.util.Packages;
 
 import java.io.File;
@@ -42,7 +41,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Path;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -64,17 +62,6 @@ public final class ReflectiveJarRelocatorFacadeFactory implements JarRelocatorFa
         this.jarRelocatorRunMethod = jarRelocatorRunMethod;
     }
 
-
-    @Override
-    public JarRelocatorFacade createFacade(final File input, final File output, final Collection<RelocationRule> relocationRules) throws IllegalAccessException, InstantiationException, InvocationTargetException {
-        final Collection<Object> relocations = new HashSet<>();
-        for (final RelocationRule rule: relocationRules) {
-            relocations.add(createRelocation(relocationConstructor, rule));
-        }
-        final Object relocator = createRelocator(jarRelocatorConstructor, input, output, relocations);
-        return new ReflectiveJarRelocatorFacade(relocator, jarRelocatorRunMethod);
-    }
-
     private static Object createRelocation(final Constructor<?> relocationConstructor, final RelocationRule rule) throws IllegalAccessException, InvocationTargetException, InstantiationException {
         return relocationConstructor.newInstance(rule.getOriginalPackagePattern(), rule.getRelocatedPackagePattern(), rule.getExclusions(), rule.getInclusions());
     }
@@ -89,21 +76,21 @@ public final class ReflectiveJarRelocatorFacadeFactory implements JarRelocatorFa
                 "asm",
                 "9.1",
                 null,
-                Collections.emptyList()
+                new HashSet<>()
         );
         final Dependency asmCommons = new Dependency(
                 Packages.fix("org#ow2#asm"),
                 "asm-commons",
                 "9.1",
                 null,
-                Collections.emptyList()
+                new HashSet<>()
         );
         final Dependency jarRelocator = new Dependency(
                 Packages.fix("me#lucko"),
                 "jar-relocator",
                 "1.4",
                 null,
-                Arrays.asList(asm, asmCommons)
+                new HashSet<>(Arrays.asList(asm, asmCommons))
         );
         return new DependencyData(
                 Collections.emptySet(),
@@ -124,7 +111,7 @@ public final class ReflectiveJarRelocatorFacadeFactory implements JarRelocatorFa
                 .preResolutionDataProviderFactory(a -> Collections::emptyMap)
                 .dataProviderFactory((url) -> () -> ReflectiveJarRelocatorFacadeFactory.getJarRelocatorDependency(repositories))
                 .relocatorFactory((rules) -> new PassthroughRelocator())
-                .relocationHelperFactory((relocator) -> (dependency,file) -> file)
+                .relocationHelperFactory((relocator) -> (dependency, file) -> file)
                 .build();
         final Class<?> jarRelocatorClass = Class.forName(Packages.fix(JAR_RELOCATOR_PACKAGE), true, classLoader);
         final Class<?> relocationClass = Class.forName(Packages.fix(RELOCATION_PACKAGE), true, classLoader);
@@ -132,5 +119,15 @@ public final class ReflectiveJarRelocatorFacadeFactory implements JarRelocatorFa
         final Constructor<?> relocationConstructor = relocationClass.getConstructor(String.class, String.class, Collection.class, Collection.class);
         final Method runMethod = jarRelocatorClass.getMethod("run");
         return new ReflectiveJarRelocatorFacadeFactory(jarRelocatorConstructor, relocationConstructor, runMethod);
+    }
+
+    @Override
+    public JarRelocatorFacade createFacade(final File input, final File output, final Collection<RelocationRule> relocationRules) throws IllegalAccessException, InstantiationException, InvocationTargetException {
+        final Collection<Object> relocations = new HashSet<>();
+        for (final RelocationRule rule : relocationRules) {
+            relocations.add(createRelocation(relocationConstructor, rule));
+        }
+        final Object relocator = createRelocator(jarRelocatorConstructor, input, output, relocations);
+        return new ReflectiveJarRelocatorFacade(relocator, jarRelocatorRunMethod);
     }
 }

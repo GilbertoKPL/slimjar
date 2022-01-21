@@ -44,21 +44,6 @@ public final class ChecksumFilePathStrategy implements FilePathStrategy {
         this.algorithm = algorithm.replaceAll("[ -]", "").toLowerCase(Locale.ENGLISH);
     }
 
-    @Override
-    public File selectFileFor(Dependency dependency) {
-        final String extendedVersion = Optional.ofNullable(dependency.getSnapshotId()).map(s -> "-" + s).orElse("");
-        final String path = String.format(
-                DEPENDENCY_FILE_FORMAT,
-                rootDirectory.getPath(),
-                dependency.getGroupId().replace('.','/'),
-                dependency.getArtifactId(),
-                dependency.getVersion() + extendedVersion,
-                algorithm
-        );
-        LOGGER.log(Level.FINEST, "Selected checksum file for " + dependency.getArtifactId() + " at " + path);
-        return new File(path);
-    }
-
     public static FilePathStrategy createStrategy(final File rootDirectory, final String algorithm) throws IllegalArgumentException {
         if (!rootDirectory.exists()) {
             boolean created = rootDirectory.mkdirs();
@@ -70,5 +55,20 @@ public final class ChecksumFilePathStrategy implements FilePathStrategy {
             throw new IllegalArgumentException("Expecting a directory for download root! " + rootDirectory);
         }
         return new ChecksumFilePathStrategy(rootDirectory, algorithm);
+    }
+
+    @Override
+    public File selectFileFor(Dependency dependency) {
+        final String extendedVersion = Optional.ofNullable(dependency.getSnapshotId()).map(s -> "-" + s).orElse("");
+        final String path = String.format(
+                DEPENDENCY_FILE_FORMAT,
+                rootDirectory.getPath(),
+                dependency.getGroupId().replace('.', '/'),
+                dependency.getArtifactId(),
+                dependency.getVersion() + extendedVersion,
+                algorithm
+        );
+        LOGGER.log(Level.FINEST, "Selected checksum file for " + dependency.getArtifactId() + " at " + path);
+        return new File(path);
     }
 }

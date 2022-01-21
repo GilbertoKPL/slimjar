@@ -29,9 +29,12 @@ import io.github.slimjar.exceptions.ShadowNotFoundException
 import io.github.slimjar.func.applyReleaseRepo
 import io.github.slimjar.func.applySnapshotRepo
 import io.github.slimjar.func.createConfig
+import io.github.slimjar.func.slim
 import io.github.slimjar.task.SlimJar
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Dependency
+import org.gradle.api.internal.artifacts.dependencies.DefaultProjectDependency
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.maven
@@ -74,6 +77,11 @@ class SlimJarPlugin : Plugin<Project> {
             if (applySnapshotRepo) {
                 repositories.maven("https://repo.vshnv.tech/snapshots/")
             }
+            if (plugins.hasPlugin("java-library")) {
+                scanSlim(project).forEach {
+                    project.dependencies.slim(it)
+                }
+            }
         }
         project.dependencies.extra.set(
             "slimjar",
@@ -98,4 +106,27 @@ class SlimJarPlugin : Plugin<Project> {
         tasks.findByName(RESOURCES_TASK)?.finalizedBy(slimJar)
     }
 
+    private fun scanSlim(project: Project): Collection<Dependency> {
+        val found = HashSet<Dependency>()
+        val impl = project.configurations.findByName(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME)
+        if (impl == null) {
+            return emptyList()
+        }
+        impl.dependencies
+            .filterIsInstance<DefaultProjectDependency>()
+            .map { it.dependencyProject }
+            .forEach {
+                found.addAll(scanSlim(it))
+                val slim = it.configurations.findByName(SLIM_CONFIGURATION_NAME)
+                if (slim == null) {
+                    return@forEach
+                }
+                slim.dependencies
+                    .filterNotNull()
+                    .forEach { dep ->
+                        found.add(dep)
+                    }
+            }
+        return found
+    }
 }

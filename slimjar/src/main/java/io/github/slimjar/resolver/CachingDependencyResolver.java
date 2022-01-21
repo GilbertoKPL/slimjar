@@ -27,14 +27,17 @@ package io.github.slimjar.resolver;
 
 import io.github.slimjar.logging.LogDispatcher;
 import io.github.slimjar.logging.ProcessLogger;
-import io.github.slimjar.resolver.data.Repository;
 import io.github.slimjar.resolver.data.Dependency;
+import io.github.slimjar.resolver.data.Repository;
 import io.github.slimjar.resolver.enquirer.RepositoryEnquirer;
 import io.github.slimjar.resolver.enquirer.RepositoryEnquirerFactory;
 import io.github.slimjar.resolver.pinger.URLPinger;
 
 import java.net.URL;
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -79,7 +82,7 @@ public final class CachingDependencyResolver implements DependencyResolver {
                 .filter(Objects::nonNull)
                 .findFirst();
         final String resolvedResult = result.map(ResolutionResult::getDependencyURL).map(Objects::toString).orElse(FAILED_RESOLUTION_MESSAGE);
-        LOGGER.log("Resolved {0} @ {1}", dependency.getArtifactId(), resolvedResult);
+        LOGGER.debug("Resolved {0} @ {1}", dependency.getArtifactId(), resolvedResult);
         return result.orElse(null);
     }
 }

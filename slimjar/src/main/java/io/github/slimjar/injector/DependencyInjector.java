@@ -26,13 +26,11 @@ package io.github.slimjar.injector;
 
 import io.github.slimjar.injector.loader.Injectable;
 import io.github.slimjar.resolver.ResolutionResult;
-import io.github.slimjar.resolver.data.Dependency;
 import io.github.slimjar.resolver.data.DependencyData;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Collection;
 import java.util.Map;
 
 

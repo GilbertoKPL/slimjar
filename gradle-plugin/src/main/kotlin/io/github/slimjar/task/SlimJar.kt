@@ -43,12 +43,7 @@ import io.github.slimjar.resolver.enquirer.PingingRepositoryEnquirerFactory
 import io.github.slimjar.resolver.mirrors.SimpleMirrorSelector
 import io.github.slimjar.resolver.pinger.HttpURLPinger
 import io.github.slimjar.resolver.pinger.URLPinger
-import io.github.slimjar.resolver.strategy.MavenChecksumPathResolutionStrategy
-import io.github.slimjar.resolver.strategy.MavenPathResolutionStrategy
-import io.github.slimjar.resolver.strategy.MavenPomPathResolutionStrategy
-import io.github.slimjar.resolver.strategy.MavenSnapshotPathResolutionStrategy
-import io.github.slimjar.resolver.strategy.MediatingPathResolutionStrategy
-import io.github.slimjar.resolver.strategy.PathResolutionStrategy
+import io.github.slimjar.resolver.strategy.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
@@ -76,10 +71,9 @@ private val scope = CoroutineScope(IO)
 @CacheableTask
 abstract class SlimJar @Inject constructor(private val config: Configuration) : DefaultTask() {
 
-    // Find by name since it won't always be present
-    private val apiConfig = project.configurations.findByName(SLIM_API_CONFIGURATION_NAME)
-
     private val relocations = mutableSetOf<RelocationRule>()
+    private val excludes = mutableSetOf<String>()
+    private val excludedRepositories = mutableSetOf<String>()
     private val mirrors = mutableSetOf<Mirror>()
     private val isolatedProjects = mutableSetOf<Project>()
 
@@ -97,6 +91,16 @@ abstract class SlimJar @Inject constructor(private val config: Configuration) : 
     init {
         group = "slimJar"
         inputs.files(config)
+    }
+
+    open fun exclude(groupIdArtifactId: String): SlimJar {
+        excludes.add(groupIdArtifactId)
+        return this
+    }
+
+    open fun excludeRepository(repositoryUrl: String): SlimJar {
+        excludedRepositories.add(repositoryUrl)
+        return this
     }
 
     open fun relocate(original: String, relocated: String): SlimJar {
@@ -121,9 +125,7 @@ abstract class SlimJar @Inject constructor(private val config: Configuration) : 
         if (proj.slimInjectToIsolated) {
             proj.pluginManager.apply(ShadowPlugin::class.java)
             proj.pluginManager.apply(SlimJarPlugin::class.java)
-            proj.getTasksByName("slimJar", true).firstOrNull()?.let {
-                it.setProperty("shade", false)
-            }
+            proj.getTasksByName("slimJar", true).firstOrNull()?.setProperty("shade", false)
         }
 
         val shadowTask = proj.getTasksByName("shadowJar", true).firstOrNull()
@@ -143,9 +145,10 @@ abstract class SlimJar @Inject constructor(private val config: Configuration) : 
                 .children
                 .mapNotNull {
                     it.toSlimDependency()
-                }.toMutableSet()
+                }
+                .toMutableSet()
         // If api config is present map dependencies from it as well
-        apiConfig?.let { config ->
+        project.configurations.findByName(SLIM_API_CONFIGURATION_NAME)?.let { config ->
             dependencies.addAll(
                 RenderableModuleResult(config.incoming.resolutionResult.root)
                     .children
@@ -159,6 +162,7 @@ abstract class SlimJar @Inject constructor(private val config: Configuration) : 
             .filterNot { it.url.toString().startsWith("file") }
             .toSet()
             .map { Repository(it.url.toURL()) }
+            .filterNot { excludedRepositories.any { repository -> it.url.toString().contains(repository) } }
 
         // Note: Commented out to allow creation of empty dependency file
         // if (dependencies.isEmpty() || repositories.isEmpty()) return
@@ -167,6 +171,8 @@ abstract class SlimJar @Inject constructor(private val config: Configuration) : 
 
         val file = File(outputDirectory, "slimjar.json")
 
+        handleExcludes(dependencies)
+
         FileWriter(file).use {
             gson.toJson(DependencyData(mirrors, repositories, dependencies, relocations), it)
         }
@@ -174,6 +180,33 @@ abstract class SlimJar @Inject constructor(private val config: Configuration) : 
         // Copies to shadow's main folder
         if (shadowWriteFolder.exists().not()) shadowWriteFolder.mkdirs()
         file.copyTo(File(shadowWriteFolder, file.name), true)
+    }
+
+    private fun handleExcludes(dependencies: MutableSet<Dependency>) {
+        val iterator = dependencies.iterator()
+        while (iterator.hasNext()) {
+            val dependency = iterator.next();
+            val formatted = dependency.groupId + ":" + dependency.artifactId;
+            if (excludes.contains(formatted)) {
+                iterator.remove()
+                continue
+            }
+            handleExcludes(dependency.transitive)
+        }
+    }
+
+    private fun handleExcludes(dependencies: MutableMap<String, ResolutionResult>): MutableMap<String, ResolutionResult> {
+        val result = HashMap<String, ResolutionResult>();
+        val iterator = dependencies.iterator()
+        while (iterator.hasNext()) {
+            val next = iterator.next();
+            val dependency = next.key
+            if (excludes.any { exclude -> dependency.contains(exclude) }) {
+                continue
+            }
+            result[next.key] = next.value
+        }
+        return result
     }
 
     // Finds jars to be isolated and adds them to final jar
@@ -213,14 +246,15 @@ abstract class SlimJar @Inject constructor(private val config: Configuration) : 
         }
         val dependencies = RenderableModuleResult(config.incoming.resolutionResult.root)
             .children
-            .mapNotNull {
-                it.toSlimDependency()
-            }.toMutableSet().flatten()
+            .mapNotNull { it.toSlimDependency() }
+            .toMutableSet()
+            .flatten()
 
         val repositories = repositories.filterIsInstance<MavenArtifactRepository>()
             .filterNot { it.url.toString().startsWith("file") }
             .toSet()
             .map { Repository(it.url.toURL()) }
+            .filterNot { excludedRepositories.any { repository -> it.url.toString().contains(repository) } }
 
         val releaseStrategy: PathResolutionStrategy = MavenPathResolutionStrategy()
         val snapshotStrategy: PathResolutionStrategy = MavenSnapshotPathResolutionStrategy()
@@ -243,7 +277,7 @@ abstract class SlimJar @Inject constructor(private val config: Configuration) : 
             enquirerFactory,
             mapOf()
         )
-        val result: MutableMap<String, ResolutionResult> = runBlocking(IO) {
+        var result: MutableMap<String, ResolutionResult> = runBlocking(IO) {
             dependencies
                 // Filter to enforce incremental resolution
                 .filter {
@@ -266,6 +300,8 @@ abstract class SlimJar @Inject constructor(private val config: Configuration) : 
         }
 
         if (outputDirectory.exists().not()) outputDirectory.mkdirs()
+
+        result = handleExcludes(result)
 
         FileWriter(file).use {
             gson.toJson(result, it)

@@ -27,10 +27,10 @@ package io.github.slimjar.resolver.mirrors;
 import io.github.slimjar.resolver.data.Mirror;
 import io.github.slimjar.resolver.data.Repository;
 
-
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.stream.Collectors;
 
 public final class SimpleMirrorSelector implements MirrorSelector {
@@ -42,6 +42,11 @@ public final class SimpleMirrorSelector implements MirrorSelector {
 
     public SimpleMirrorSelector(final Collection<Repository> centralMirrors) {
         this.centralMirrors = centralMirrors;
+    }
+
+    private static boolean isCentral(final Repository repository) {
+        final String url = repository.getUrl().toString();
+        return CENTRAL_REPO.contains(url);
     }
 
     @Override
@@ -60,10 +65,5 @@ public final class SimpleMirrorSelector implements MirrorSelector {
         resolved.addAll(mirrored);
         resolved.addAll(centralMirrors);
         return resolved;
-    }
-
-    private static boolean isCentral(final Repository repository) {
-        final String url = repository.getUrl().toString();
-        return CENTRAL_REPO.contains(url);
     }
 }

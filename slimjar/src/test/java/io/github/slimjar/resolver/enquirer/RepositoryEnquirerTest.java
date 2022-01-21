@@ -30,7 +30,6 @@ import io.github.slimjar.resolver.pinger.URLPinger;
 import io.github.slimjar.resolver.strategy.MavenChecksumPathResolutionStrategy;
 import io.github.slimjar.resolver.strategy.MavenPomPathResolutionStrategy;
 import io.github.slimjar.resolver.strategy.PathResolutionStrategy;
-import io.github.slimjar.util.Repositories;
 import junit.framework.TestCase;
 import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;
@@ -50,11 +49,11 @@ public class RepositoryEnquirerTest extends TestCase {
         final URLPinger pinger = PowerMockito.mock(URLPinger.class);
 
         PowerMockito.whenNew(URL.class).withAnyArguments().thenReturn(mockUrl);
-        PowerMockito.doReturn(Collections.singleton("https://a.b.c/repo/dep.jar")).when(resolutionStrategy).pathTo(new Repository(mockUrl), new Dependency("a.b.c","d","", null, Collections.emptySet()));
+        PowerMockito.doReturn(Collections.singleton("https://a.b.c/repo/dep.jar")).when(resolutionStrategy).pathTo(new Repository(mockUrl), new Dependency("a.b.c", "d", "", null, Collections.emptySet()));
         PowerMockito.doReturn(true).when(pinger).ping(mockUrl);
 
         final RepositoryEnquirer repositoryEnquirer = new PingingRepositoryEnquirer(new Repository(mockUrl), resolutionStrategy, new MavenChecksumPathResolutionStrategy("SHA-256", resolutionStrategy), new MavenPomPathResolutionStrategy(), pinger);
-        assertNotNull("Valid repo & dep should return non-null URL", repositoryEnquirer.enquire(new Dependency("a.b.c","d","", null, Collections.emptySet())));
+        assertNotNull("Valid repo & dep should return non-null URL", repositoryEnquirer.enquire(new Dependency("a.b.c", "d", "", null, Collections.emptySet())));
     }
 
     public void testPingingEnquirerProvideInvalidURL() throws Exception {

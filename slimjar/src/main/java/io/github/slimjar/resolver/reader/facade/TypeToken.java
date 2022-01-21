@@ -5,12 +5,9 @@ import java.lang.reflect.Type;
 
 public class TypeToken<T> {
     private final Type rawType;
+
     public TypeToken() {
         this.rawType = getSuperclassTypeParameter(getClass());
-    }
-
-    public Type getRawType() {
-        return rawType;
     }
 
     private static Type getSuperclassTypeParameter(final Class<?> subclass) {
@@ -20,5 +17,9 @@ public class TypeToken<T> {
         }
         ParameterizedType parameterized = (ParameterizedType) superclass;
         return parameterized.getActualTypeArguments()[0];
+    }
+
+    public Type getRawType() {
+        return rawType;
     }
 }

@@ -43,21 +43,6 @@ public final class RelocationFilePathStrategy implements FilePathStrategy {
         this.applicationName = applicationName;
     }
 
-    @Override
-    public File selectFileFor(final Dependency dependency) {
-        final String extendedVersion = Optional.ofNullable(dependency.getSnapshotId()).map(s -> "-" + s).orElse("");
-        final String path = String.format(
-                DEPENDENCY_FILE_FORMAT,
-                rootDirectory.getPath(),
-                dependency.getGroupId().replace('.','/'),
-                dependency.getArtifactId(),
-                dependency.getVersion() + extendedVersion,
-                applicationName
-        );
-        LOGGER.log(Level.FINEST, "Selected file for relocated " + dependency.getArtifactId() + " at " + path);
-        return new File(path);
-    }
-
     public static FilePathStrategy createStrategy(final File rootDirectory, final String applicationName) throws IllegalArgumentException {
         if (!rootDirectory.exists()) {
             boolean created = rootDirectory.mkdirs();
@@ -69,5 +54,20 @@ public final class RelocationFilePathStrategy implements FilePathStrategy {
             throw new IllegalArgumentException("Expecting a directory for download root! " + rootDirectory);
         }
         return new RelocationFilePathStrategy(applicationName, rootDirectory);
+    }
+
+    @Override
+    public File selectFileFor(final Dependency dependency) {
+        final String extendedVersion = Optional.ofNullable(dependency.getSnapshotId()).map(s -> "-" + s).orElse("");
+        final String path = String.format(
+                DEPENDENCY_FILE_FORMAT,
+                rootDirectory.getPath(),
+                dependency.getGroupId().replace('.', '/'),
+                dependency.getArtifactId(),
+                dependency.getVersion() + extendedVersion,
+                applicationName
+        );
+        LOGGER.log(Level.FINEST, "Selected file for relocated " + dependency.getArtifactId() + " at " + path);
+        return new File(path);
     }
 }

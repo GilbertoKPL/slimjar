@@ -31,12 +31,13 @@ import java.net.URLConnection;
 
 public final class Connections {
     private static final String SLIMJAR_USER_AGENT = "SlimjarApplication/* URLDependencyDownloader";
+
     private Connections() {
 
     }
 
     public static URLConnection createDownloadConnection(final URL url) throws IOException {
-        final URLConnection connection =  url.openConnection();
+        final URLConnection connection = url.openConnection();
         if (connection instanceof HttpURLConnection) {
             final HttpURLConnection httpConnection = (HttpURLConnection) connection;
             connection.addRequestProperty("User-Agent", SLIMJAR_USER_AGENT);
@@ -47,6 +48,7 @@ public final class Connections {
         }
         return connection;
     }
+
     public static void tryDisconnect(final URLConnection urlConnection) {
         if (urlConnection instanceof HttpURLConnection) {
             ((HttpURLConnection) urlConnection).disconnect();

@@ -27,7 +27,8 @@ package io.github.slimjar.app.builder;
 import io.github.slimjar.app.AppendingApplication;
 import io.github.slimjar.app.Application;
 import io.github.slimjar.injector.DependencyInjector;
-import io.github.slimjar.injector.loader.*;
+import io.github.slimjar.injector.loader.Injectable;
+import io.github.slimjar.injector.loader.InjectableFactory;
 import io.github.slimjar.resolver.ResolutionResult;
 import io.github.slimjar.resolver.data.DependencyData;
 import io.github.slimjar.resolver.reader.dependency.DependencyDataProvider;
@@ -51,19 +52,6 @@ public final class InjectingApplicationBuilder extends ApplicationBuilder {
         this.injectableSupplier = injectableSupplier;
     }
 
-    @Override
-    public Application buildApplication() throws IOException, ReflectiveOperationException, URISyntaxException, NoSuchAlgorithmException {
-        final DependencyDataProvider dataProvider = getDataProviderFactory().create(getDependencyFileUrl());
-        final DependencyData dependencyData = dataProvider.get();
-        final DependencyInjector dependencyInjector = createInjector();
-
-        final PreResolutionDataProvider preResolutionDataProvider = getPreResolutionDataProviderFactory().create(getPreResolutionFileUrl());
-        final Map<String, ResolutionResult> preResolutionResultMap = preResolutionDataProvider.get();
-
-        dependencyInjector.inject(injectableSupplier.apply(this), dependencyData, preResolutionResultMap);
-        return new AppendingApplication();
-    }
-
     public static ApplicationBuilder createAppending(final String applicationName) throws ReflectiveOperationException, NoSuchAlgorithmException, IOException, URISyntaxException {
         final ClassLoader classLoader = ApplicationBuilder.class.getClassLoader();
         return createAppending(applicationName, classLoader);
@@ -78,6 +66,19 @@ public final class InjectingApplicationBuilder extends ApplicationBuilder {
             }
             return null;
         });
+    }
+
+    @Override
+    public Application buildApplication() throws IOException, ReflectiveOperationException, URISyntaxException, NoSuchAlgorithmException {
+        final DependencyDataProvider dataProvider = getDataProviderFactory().create(getDependencyFileUrl());
+        final DependencyData dependencyData = dataProvider.get();
+        final DependencyInjector dependencyInjector = createInjector();
+
+        final PreResolutionDataProvider preResolutionDataProvider = getPreResolutionDataProviderFactory().create(getPreResolutionFileUrl());
+        final Map<String, ResolutionResult> preResolutionResultMap = preResolutionDataProvider.get();
+
+        dependencyInjector.inject(injectableSupplier.apply(this), dependencyData, preResolutionResultMap);
+        return new AppendingApplication();
     }
 }
 

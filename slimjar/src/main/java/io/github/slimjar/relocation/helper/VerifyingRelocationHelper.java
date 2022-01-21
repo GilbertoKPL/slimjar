@@ -25,17 +25,14 @@
 package io.github.slimjar.relocation.helper;
 
 import io.github.slimjar.downloader.strategy.FilePathStrategy;
-import io.github.slimjar.downloader.verify.FileChecksumCalculator;
 import io.github.slimjar.relocation.Relocator;
 import io.github.slimjar.relocation.meta.MetaMediator;
 import io.github.slimjar.relocation.meta.MetaMediatorFactory;
 import io.github.slimjar.resolver.data.Dependency;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.NoSuchFileException;
 import java.security.NoSuchAlgorithmException;
 
 public final class VerifyingRelocationHelper implements RelocationHelper {

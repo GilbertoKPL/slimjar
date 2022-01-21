@@ -31,7 +31,6 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.kotlin.dsl.DependencyHandlerScope
-import org.gradle.kotlin.dsl.maven
 
 /**
  * Checks in the gradle.properties if should or not resolve dependencies at compile time
@@ -64,11 +63,12 @@ val Project.slimInjectToIsolated: Boolean
  */
 fun Project.createConfig(configName: String, vararg extends: String): Configuration {
     val compileOnlyConfig = extends.map {
-        configurations.findByName(it) ?: throw ConfigurationNotFoundException("Could not find `$extends` configuration!")
+        configurations.findByName(it)
+            ?: throw ConfigurationNotFoundException("Could not find `$extends` configuration!")
     }
 
     val slimConfig = configurations.create(configName)
-    compileOnlyConfig.forEach { it.extendsFrom(slimConfig)}
+    compileOnlyConfig.forEach { it.extendsFrom(slimConfig) }
     slimConfig.isTransitive = true
 
     return slimConfig

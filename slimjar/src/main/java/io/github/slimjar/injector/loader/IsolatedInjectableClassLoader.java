@@ -25,7 +25,10 @@
 package io.github.slimjar.injector.loader;
 
 import java.net.URL;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public final class IsolatedInjectableClassLoader extends InjectableClassLoader {
     private final Map<String, Class<?>> delegatesMap = new HashMap<>();
@@ -39,7 +42,7 @@ public final class IsolatedInjectableClassLoader extends InjectableClassLoader {
     }
 
     public IsolatedInjectableClassLoader(final URL[] urls, final Collection<Class<?>> delegates) {
-      this(urls, getSystemClassLoader().getParent(), delegates);
+        this(urls, getSystemClassLoader().getParent(), delegates);
     }
 
     public IsolatedInjectableClassLoader(final URL[] urls, final ClassLoader parent, final Collection<Class<?>> delegates) {

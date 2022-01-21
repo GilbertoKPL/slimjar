@@ -44,7 +44,7 @@ public class URLPingerTest extends TestCase {
         final HttpURLConnection httpURLConnection = PowerMockito.mock(HttpURLConnection.class);
         PowerMockito.when(mockUrl.openConnection()).thenReturn(httpURLConnection);
         PowerMockito.when(mockUrl.getProtocol()).thenReturn("HTTP");
-        PowerMockito.doNothing().when(httpURLConnection).addRequestProperty("","");
+        PowerMockito.doNothing().when(httpURLConnection).addRequestProperty("", "");
         PowerMockito.doNothing().when(httpURLConnection).connect();
         PowerMockito.doReturn(HttpURLConnection.HTTP_OK).when(httpURLConnection).getResponseCode();
         final URLPinger urlPinger = new HttpURLPinger();
@@ -57,7 +57,7 @@ public class URLPingerTest extends TestCase {
         final HttpsURLConnection httpsURLConnection = PowerMockito.mock(HttpsURLConnection.class);
         PowerMockito.when(mockUrl.openConnection()).thenReturn(httpsURLConnection);
         PowerMockito.when(mockUrl.getProtocol()).thenReturn("HTTPS");
-        PowerMockito.doNothing().when(httpsURLConnection).addRequestProperty("","");
+        PowerMockito.doNothing().when(httpsURLConnection).addRequestProperty("", "");
         PowerMockito.doNothing().when(httpsURLConnection).connect();
         PowerMockito.doReturn(HttpURLConnection.HTTP_OK).when(httpsURLConnection).getResponseCode();
         final URLPinger urlPinger = new HttpURLPinger();
@@ -70,7 +70,7 @@ public class URLPingerTest extends TestCase {
         final HttpsURLConnection httpsURLConnection = PowerMockito.mock(HttpsURLConnection.class);
         PowerMockito.when(mockUrl.openConnection()).thenReturn(httpsURLConnection);
         PowerMockito.when(mockUrl.getProtocol()).thenReturn("HTTPS");
-        PowerMockito.doNothing().when(httpsURLConnection).addRequestProperty("","");
+        PowerMockito.doNothing().when(httpsURLConnection).addRequestProperty("", "");
         PowerMockito.doNothing().when(httpsURLConnection).connect();
         PowerMockito.doReturn(HttpURLConnection.HTTP_BAD_REQUEST).when(httpsURLConnection).getResponseCode();
         final URLPinger urlPinger = new HttpURLPinger();
@@ -83,7 +83,7 @@ public class URLPingerTest extends TestCase {
         final HttpsURLConnection httpsURLConnection = PowerMockito.mock(HttpsURLConnection.class);
         PowerMockito.when(mockUrl.openConnection()).thenReturn(httpsURLConnection);
         PowerMockito.when(mockUrl.getProtocol()).thenReturn("HTTPS");
-        PowerMockito.doNothing().when(httpsURLConnection).addRequestProperty("","");
+        PowerMockito.doNothing().when(httpsURLConnection).addRequestProperty("", "");
         PowerMockito.doThrow(new IOException()).when(httpsURLConnection).connect();
         PowerMockito.doReturn(HttpURLConnection.HTTP_BAD_REQUEST).when(httpsURLConnection).getResponseCode();
         final URLPinger urlPinger = new HttpURLPinger();

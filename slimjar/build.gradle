@@ -88,7 +88,7 @@ jar {
             from project(':loader-agent').getTasks().getByName("jar").outputs.files.singleFile
             into layout.buildDirectory.file("resources/main/")
             include('*.jar')
-            rename ('(.*).jar', 'loader-agent.isolated-jar')
+            rename('(.*).jar', 'loader-agent.isolated-jar')
         }
     }
 }

@@ -47,7 +47,7 @@ public final class MockDependencyData {
                     "gson",
                     "2.8.6",
                     null,
-                    Collections.emptyList()
+                    Collections.emptySet()
             )),
             Collections.emptyList()
     );

@@ -49,7 +49,11 @@ public abstract class Application {
         return (T) obj;
     }
 
-    public boolean start() { return false; }
+    public boolean start() {
+        return false;
+    }
 
-    public boolean stop() { return false; }
+    public boolean stop() {
+        return false;
+    }
 }
