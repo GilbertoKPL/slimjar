@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     `java-gradle-plugin`
     `kotlin-dsl`
-    `groovy`
+    groovy
     kotlin("jvm") version "1.4.20"
     id("com.gradle.plugin-publish") version "0.12.0"
     id("com.github.johnrengelman.shadow") version "7.0.0"
@@ -66,37 +66,6 @@ tasks.named("jar").configure {
 
 tasks.withType<GenerateModuleMetadata> {
     enabled = false
-}
-
-val ensureDependenciesAreInlined by tasks.registering {
-    description = "Ensures all declared dependencies are inlined into shadowed jar"
-    group = HelpTasksPlugin.HELP_GROUP
-    dependsOn(tasks.shadowJar)
-
-    doLast {
-        val nonInlinedDependencies = mutableListOf<String>()
-        zipTree(tasks.shadowJar.flatMap { it.archiveFile }).visit {
-            if (!isDirectory) {
-                val path = relativePath
-                if (
-                    !path.startsWith("META-INF") &&
-                    path.lastName.endsWith(".class") &&
-                    !path.pathString.startsWith(
-                        "io.github.slimjar".replace(".", "/")
-                    )
-                ) {
-                    nonInlinedDependencies.add(path.pathString)
-                }
-            }
-        }
-        if (nonInlinedDependencies.isNotEmpty()) {
-            throw GradleException("Found non inlined dependencies: $nonInlinedDependencies")
-        }
-    }
-}
-
-tasks.named("check") {
-    dependsOn(ensureDependenciesAreInlined)
 }
 
 tasks {
