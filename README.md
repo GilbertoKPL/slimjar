@@ -7,8 +7,8 @@
     <a href="https://github.com/SlimJar/slimjar/actions/workflows/gradle.yml">
         <img src="https://github.com/SlimJar/slimjar/actions/workflows/gradle.yml/badge.svg">
     </a>
-    <a href="https://plugins.gradle.org/plugin/io.github.slimjar">
-        <img src="https://img.shields.io/maven-metadata/v.svg?label=gradle-plugin&metadataUrl=https%3A%2F%2Fplugins.gradle.org%2Fm2%2Fio%2Fgithub%2Fslimjar%2Fio.github.slimjar.gradle.plugin%2Fmaven-metadata.xml">
+    <a href="https://plugins.gradle.org/plugin/github.slimjar">
+        <img src="https://img.shields.io/maven-metadata/v.svg?label=gradle-plugin&metadataUrl=https%3A%2F%2Fplugins.gradle.org%2Fm2%2Fio%2Fgithub%2Fslimjar%2Fgithub.slimjar.gradle.plugin%2Fmaven-metadata.xml">
     </a>
     <a href="https://repo.vshnv.tech/releases/io/github/slimjar/slimjar">
         <img src="https://img.shields.io/maven-metadata/v.svg?label=maven&metadataUrl=https%3A%2F%2Frepo.vshnv.tech%2Fio%2Fgithub%2Fslimjar%2Fslimjar%2Fmaven-metadata.xml">
@@ -50,7 +50,7 @@ build file, use the `ignoreRelocation` flag while running by using `-DignoreRelo
 ```groovy
 plugins {
     id 'com.github.johnrengelman.shadow' version '6.0.0'
-    id 'io.github.slimjar' version '1.3.0'
+    id 'github.slimjar' version '1.3.0'
 }
 dependencies {
     implementation slimjar("1.2.6")
@@ -63,7 +63,7 @@ slimJar {
 ```
 
 (For Kotlin DSL, to use the `slimjar` extension in dependencies block, you will need the following import
-- `import io.github.slimjar.func.slimjar`)
+- `import github.slimjar.func.slimjar`)
 
 <br>
 <br>
@@ -78,7 +78,7 @@ gradlew test
 <br>
 <h2 align="center">Releases</h2>
 
-* https://plugins.gradle.org/plugin/io.github.slimjar
+* https://plugins.gradle.org/plugin/github.slimjar
 * https://repo.vshnv.tech/releases/io/github/slimjar/slimjar/1.2.1
 
 Distributed under the MIT license. See ``LICENSE`` for more information.

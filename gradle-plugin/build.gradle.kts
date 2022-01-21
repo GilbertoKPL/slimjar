@@ -12,7 +12,7 @@ plugins {
     `maven-publish`
 }
 
-group = "io.github.slimjar"
+group = "github.slimjar"
 version = "1.3.0-SNAPSHOT"
 
 repositories {
@@ -82,10 +82,10 @@ tasks {
 
     withType<ShadowJar> {
         mapOf(
-            "io.github.slimjar" to "",
+            "github.slimjar" to "",
             "me.lucko.jarrelocator" to ".jarrelocator",
             "com.google.gson" to ".gson"
-        ).forEach { relocate(it.key, "io.github.slimjar${it.value}") }
+        ).forEach { relocate(it.key, "github.slimjar${it.value}") }
         relocate("kotlin", "kotlin")
     }
 
@@ -110,10 +110,10 @@ afterEvaluate {
 gradlePlugin {
     plugins {
         create("slimjar") {
-            id = "io.github.slimjar"
+            id = "github.slimjar"
             displayName = "SlimJar"
             description = "JVM Runtime Dependency Management."
-            implementationClass = "io.github.slimjar.SlimJarPlugin"
+            implementationClass = "github.slimjar.SlimJarPlugin"
         }
     }
 }

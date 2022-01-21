@@ -27,7 +27,7 @@ publishing {
     publications {
         mavenPublish(MavenPublication) {
             from components.java
-            groupId 'io.github.slimjar'
+            groupId 'github.slimjar'
             artifactId 'slimjar'
             version project.version
             pom {
@@ -58,23 +58,6 @@ publishing {
                 }
             }
 
-        }
-    }
-    repositories {
-        maven {
-            if (project.version.endsWith('-SNAPSHOT')) {
-                url "https://repo.vshnv.tech/snapshots/"
-            } else {
-                url "https://repo.vshnv.tech/releases/"
-            }
-
-            credentials {
-                username = project.findProperty("reposiliteAlias") ?: ""
-                password = project.findProperty("reposiliteToken") ?: ""
-            }
-            authentication {
-                basic(BasicAuthentication)
-            }
         }
     }
 }

@@ -2,7 +2,7 @@ plugins {
     id 'java'
 }
 
-group 'io.github.slimjar'
+group 'github.slimjar'
 version '1.2.0'
 
 repositories {

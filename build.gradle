@@ -5,7 +5,7 @@ plugins {
 }
 
 allprojects {
-    group 'io.github.slimjar'
+    group 'github.slimjar'
 
     apply plugin: 'com.github.hierynomus.license-base'
 
