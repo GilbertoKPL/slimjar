@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 
 public final class InjectingApplicationBuilder extends ApplicationBuilder {
@@ -37,7 +38,7 @@ public final class InjectingApplicationBuilder extends ApplicationBuilder {
         return new InjectingApplicationBuilder(applicationName, (ApplicationBuilder builder) -> {
             try {
                 return InjectableFactory.create(builder.getDownloadDirectoryPath(), builder.getInternalRepositories(), classLoader);
-            } catch (URISyntaxException | ReflectiveOperationException | NoSuchAlgorithmException | IOException exception) {
+            } catch (URISyntaxException | ReflectiveOperationException | NoSuchAlgorithmException | IOException | ExecutionException | InterruptedException exception) {
                 exception.printStackTrace();
             }
             return null;
@@ -45,7 +46,7 @@ public final class InjectingApplicationBuilder extends ApplicationBuilder {
     }
 
     @Override
-    public Application buildApplication() throws IOException, ReflectiveOperationException, URISyntaxException, NoSuchAlgorithmException {
+    public Application buildApplication() throws IOException, ReflectiveOperationException, URISyntaxException, NoSuchAlgorithmException, ExecutionException, InterruptedException {
         final DependencyDataProvider dataProvider = getDataProviderFactory().create(getDependencyFileUrl());
         final DependencyData dependencyData = dataProvider.get();
         final DependencyInjector dependencyInjector = createInjector();

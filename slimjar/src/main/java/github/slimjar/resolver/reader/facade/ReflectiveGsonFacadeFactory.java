@@ -21,6 +21,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.concurrent.ExecutionException;
 
 public final class ReflectiveGsonFacadeFactory implements GsonFacadeFactory {
     private static final String GSON_PACKAGE = "com#google#gson#Gson";
@@ -38,12 +39,12 @@ public final class ReflectiveGsonFacadeFactory implements GsonFacadeFactory {
         this.canonicalizeMethod = canonicalizeMethod;
     }
 
-    public static GsonFacadeFactory create(final Path downloadPath, final Collection<Repository> repositories) throws ReflectiveOperationException, NoSuchAlgorithmException, IOException, URISyntaxException {
+    public static GsonFacadeFactory create(final Path downloadPath, final Collection<Repository> repositories) throws ReflectiveOperationException, NoSuchAlgorithmException, IOException, URISyntaxException, ExecutionException, InterruptedException {
         final InjectableClassLoader classLoader = new IsolatedInjectableClassLoader();
         return create(downloadPath, repositories, classLoader);
     }
 
-    public static GsonFacadeFactory create(final Path downloadPath, final Collection<Repository> repositories, final InjectableClassLoader classLoader) throws ReflectiveOperationException, NoSuchAlgorithmException, IOException, URISyntaxException {
+    public static GsonFacadeFactory create(final Path downloadPath, final Collection<Repository> repositories, final InjectableClassLoader classLoader) throws ReflectiveOperationException, NoSuchAlgorithmException, IOException, URISyntaxException, ExecutionException, InterruptedException {
         ApplicationBuilder.injecting("SlimJar", classLoader)
                 .downloadDirectoryPath(downloadPath)
                 .dataProviderFactory((url) -> () -> ReflectiveGsonFacadeFactory.getGsonDependency(repositories))

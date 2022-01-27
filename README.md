@@ -40,7 +40,7 @@ configuration generation...etc with the simplicity of minor tweaks in your build
 
 ```java
 // this needs to be ran before you reference your dependencies
-ApplicationBuilder.appending("MyApplicationName").build()
+//ApplicationBuilder.appending("MyApplicationName").build()
 ```
 
 (NOTE: If you have specified relocations and are running in a IDE or any environment that does not use the shadowjar-ed

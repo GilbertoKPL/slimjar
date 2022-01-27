@@ -17,6 +17,7 @@ import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 public final class IsolatedApplicationBuilder extends ApplicationBuilder {
     private final IsolationConfiguration isolationConfiguration;
@@ -29,7 +30,7 @@ public final class IsolatedApplicationBuilder extends ApplicationBuilder {
     }
 
     @Override
-    public Application buildApplication() throws IOException, ReflectiveOperationException, URISyntaxException, NoSuchAlgorithmException {
+    public Application buildApplication() throws IOException, ReflectiveOperationException, URISyntaxException, NoSuchAlgorithmException, ExecutionException, InterruptedException {
         final DependencyInjector injector = createInjector();
         final URL[] moduleUrls = Modules.extract(isolationConfiguration.getModuleExtractor(), isolationConfiguration.getModules());
 
