@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.concurrent.ExecutionException;
 
 public final class ReflectiveJarRelocatorFacadeFactory implements JarRelocatorFacadeFactory {
     private static final String JAR_RELOCATOR_PACKAGE = "me#lucko#jarrelocator#JarRelocator";
@@ -77,12 +76,12 @@ public final class ReflectiveJarRelocatorFacadeFactory implements JarRelocatorFa
         );
     }
 
-    public static JarRelocatorFacadeFactory create(final Path downloadPath, final Collection<Repository> repositories) throws URISyntaxException, ReflectiveOperationException, NoSuchAlgorithmException, IOException, ExecutionException, InterruptedException {
+    public static JarRelocatorFacadeFactory create(final Path downloadPath, final Collection<Repository> repositories) throws URISyntaxException, ReflectiveOperationException, NoSuchAlgorithmException, IOException {
         final InjectableClassLoader classLoader = new IsolatedInjectableClassLoader();
         return create(downloadPath, repositories, classLoader);
     }
 
-    public static JarRelocatorFacadeFactory create(final Path downloadPath, final Collection<Repository> repositories, final InjectableClassLoader classLoader) throws URISyntaxException, ReflectiveOperationException, NoSuchAlgorithmException, IOException, ExecutionException, InterruptedException {
+    public static JarRelocatorFacadeFactory create(final Path downloadPath, final Collection<Repository> repositories, final InjectableClassLoader classLoader) throws URISyntaxException, ReflectiveOperationException, NoSuchAlgorithmException, IOException {
         ApplicationBuilder.injecting("SlimJar", classLoader)
                 .downloadDirectoryPath(downloadPath)
                 .preResolutionDataProviderFactory(a -> Collections::emptyMap)

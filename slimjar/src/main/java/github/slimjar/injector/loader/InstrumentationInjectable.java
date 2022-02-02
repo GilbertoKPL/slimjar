@@ -13,7 +13,6 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
-import java.util.concurrent.ExecutionException;
 import java.util.jar.JarFile;
 
 public final class InstrumentationInjectable implements Injectable {
@@ -25,11 +24,11 @@ public final class InstrumentationInjectable implements Injectable {
         this.instrumentation = instrumentation;
     }
 
-    public static Injectable create(final Path downloadPath, final Collection<Repository> repositories) throws IOException, NoSuchAlgorithmException, ReflectiveOperationException, URISyntaxException, ExecutionException, InterruptedException {
+    public static Injectable create(final Path downloadPath, final Collection<Repository> repositories) throws IOException, NoSuchAlgorithmException, ReflectiveOperationException, URISyntaxException {
         return create(new ByteBuddyInstrumentationFactory(ReflectiveJarRelocatorFacadeFactory.create(downloadPath, repositories)));
     }
 
-    public static Injectable create(final InstrumentationFactory factory) throws IOException, NoSuchAlgorithmException, ReflectiveOperationException, URISyntaxException, ExecutionException, InterruptedException {
+    public static Injectable create(final InstrumentationFactory factory) throws IOException, NoSuchAlgorithmException, ReflectiveOperationException, URISyntaxException {
         return new InstrumentationInjectable(factory.create());
     }
 

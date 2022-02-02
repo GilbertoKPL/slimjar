@@ -29,7 +29,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 
 public final class ByteBuddyInstrumentationFactory implements InstrumentationFactory {
     public static final String AGENT_JAR = "loader-agent.isolated-jar";
@@ -76,7 +75,7 @@ public final class ByteBuddyInstrumentationFactory implements InstrumentationFac
     }
 
     @Override
-    public Instrumentation create() throws IOException, ReflectiveOperationException, URISyntaxException, NoSuchAlgorithmException, ExecutionException, InterruptedException {
+    public Instrumentation create() throws IOException, ReflectiveOperationException, URISyntaxException, NoSuchAlgorithmException {
         final URL extractedURL = extractor.extractModule(agentJarUrl, "loader-agent");
 
         final String pattern = generatePattern();
